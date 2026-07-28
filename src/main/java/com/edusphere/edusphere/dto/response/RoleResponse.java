@@ -1,10 +1,8 @@
 package com.edusphere.edusphere.dto.response;
 
-import com.edusphere.enums.RoleType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.edusphere.edusphere.entity.Role;
+import com.edusphere.edusphere.enums.RoleType;
+import lombok.*;
 
 @Getter
 @Setter

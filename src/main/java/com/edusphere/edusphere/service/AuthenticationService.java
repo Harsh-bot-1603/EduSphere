@@ -9,7 +9,7 @@ import com.edusphere.edusphere.exception.UserAlreadyExistsException;
 import com.edusphere.edusphere.repository.RoleRepository;
 import com.edusphere.edusphere.repository.UserRepository;
 import com.edusphere.edusphere.security.JwtService;
-import com.edusphere.enums.RoleType;
+import com.edusphere.edusphere.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,8 +42,8 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException("Username Already Exists");
         }
 
-        Role studentRole = roleRepository.
-                findByName(RoleType.STUDENT)
+        Role role = roleRepository.
+                findByName(request.getRole())
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
         User user = User.builder()
                 .name(request.getName())
@@ -51,7 +51,7 @@ public class AuthenticationService {
                 .password(
                         passwordEncoder.encode(request.getPassword())
                 )
-                .role(studentRole)
+                .role(role)
                 .build();
         User savedUser = userRepository.save(user);
         String jwt = jwtService.generateToken(savedUser);

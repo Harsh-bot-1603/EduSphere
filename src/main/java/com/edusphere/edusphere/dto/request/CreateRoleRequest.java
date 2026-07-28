@@ -1,6 +1,6 @@
 package com.edusphere.edusphere.dto.request;
 
-import com.edusphere.enums.RoleType;
+import com.edusphere.edusphere.enums.RoleType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -4,6 +4,7 @@ import com.edusphere.edusphere.security.CustomUserDetailsService;
 import com.edusphere.edusphere.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 
@@ -34,7 +35,10 @@ public class SecurityConfig {
         http.
                         csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/auth/register").permitAll()
+                        .requestMatchers("/auth/login","/auth/register","/api/v1/roles").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/courses").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/courses/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         jwtAuthenticationFilter,

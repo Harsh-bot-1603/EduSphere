@@ -21,12 +21,8 @@ public class RoleController {
         this.roleService = roleService;
     }
     @PostMapping
-    public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody CreateRoleRequest request) throws RoleAlreadyExistsException {
-        Role role = new Role();
-        role.setName(request.getName());
-        Role savedRole = roleService.createRole(role);
-
-        RoleResponse response = new RoleResponse(savedRole.getId(),savedRole.getName());
+    public ResponseEntity<RoleResponse> createRole( @RequestBody @Valid CreateRoleRequest request) throws RoleAlreadyExistsException {
+        RoleResponse response = roleService.createRole(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @GetMapping("/{id}")

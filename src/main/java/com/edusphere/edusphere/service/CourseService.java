@@ -1,19 +1,23 @@
 package com.edusphere.edusphere.service;
 
 import com.edusphere.edusphere.dto.request.CreateCourseRequest;
+import com.edusphere.edusphere.dto.request.UpdateCourseRequest;
 import com.edusphere.edusphere.dto.response.CourseResponse;
 import com.edusphere.edusphere.entity.Course;
 import com.edusphere.edusphere.entity.User;
 import com.edusphere.edusphere.enums.CourseStatus;
 import com.edusphere.edusphere.exception.CourseNotFoundException;
 import com.edusphere.edusphere.exception.UnauthorisedCourseCreationException;
+import com.edusphere.edusphere.exception.UnauthorizedDeletionException;
+import com.edusphere.edusphere.exception.UnauthorizedUpdateException;
 import com.edusphere.edusphere.repository.CourseRepository;
-import com.edusphere.enums.RoleType;
+import com.edusphere.edusphere.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +49,7 @@ public class CourseService {
                 .price(request.getPrice())
                 .teacher(user)
                 .status(CourseStatus.DRAFT)
+                .createdAt(LocalDateTime.now())
                 .build();
         Course savedCourse = courseRepository.save(course);
         return mapToResponse(savedCourse);
@@ -60,5 +65,25 @@ public class CourseService {
             allCourses.add(mapToResponse(course));
         }
         return allCourses;
+    }
+    public CourseResponse updateCourse(Long id, UpdateCourseRequest request){
+        Course course = courseRepository.findById(id).orElseThrow(()-> new CourseNotFoundException(id));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User) authentication.getPrincipal();
+        if(loggedInUser.getRole().getName()!=RoleType.ADMIN && !course.getTeacher().getId().equals(loggedInUser.getId()))
+            throw new UnauthorizedUpdateException("You are not allowed to update this course");
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setPrice(request.getPrice());
+        Course savedCourse = courseRepository.save(course);
+        return mapToResponse(savedCourse);
+    }
+    public void deleteCourse(Long id){
+        Course course = courseRepository.findById(id).orElseThrow(()-> new CourseNotFoundException(id));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User) authentication.getPrincipal();
+        if(loggedInUser.getRole().getName()!=RoleType.ADMIN && !course.getTeacher().getId().equals(loggedInUser.getId()))
+            throw new UnauthorizedDeletionException("You cannot delete the course");
+        courseRepository.delete(course);
     }
 }

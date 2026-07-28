@@ -1,4 +1,4 @@
-package com.edusphere.enums;
+package com.edusphere.edusphere.enums;
 
 public enum RoleType {
     STUDENT,

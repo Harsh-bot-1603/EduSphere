@@ -1,7 +1,7 @@
 package com.edusphere.edusphere.repository;
 
 import com.edusphere.edusphere.entity.Role;
-import com.edusphere.enums.RoleType;
+import com.edusphere.edusphere.enums.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
