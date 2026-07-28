@@ -5,9 +5,7 @@ import com.edusphere.edusphere.entity.Course;
 import com.edusphere.edusphere.entity.Enrollment;
 import com.edusphere.edusphere.entity.User;
 import com.edusphere.edusphere.enums.EnrollmentStatus;
-import com.edusphere.edusphere.exception.CourseNotFoundException;
-import com.edusphere.edusphere.exception.EnrollmentExistsException;
-import com.edusphere.edusphere.exception.UnauthorisedEnrollmentException;
+import com.edusphere.edusphere.exception.*;
 import com.edusphere.edusphere.repository.CourseRepository;
 import com.edusphere.edusphere.repository.EnrollmentRepository;
 import com.edusphere.edusphere.enums.RoleType;
@@ -49,6 +47,7 @@ public class EnrollmentService {
                 .enrollmentDate(LocalDateTime.now())
                 .status(EnrollmentStatus.ACTIVE)
                 .progress(0)
+                .instructorName(course.getTeacher().getName())
                 .build();
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
         return mapToEnrollment(savedEnrollment);
@@ -61,5 +60,13 @@ public class EnrollmentService {
             responses.add(mapToEnrollment(e));
         }
         return responses;
+    }
+    public void unEnroll(Long id){
+        Enrollment enrollment = enrollmentRepository.findById(id).orElseThrow(()-> new EnrollmentDoesnotExistsException("No Enrollment Found"));
+        User loggedInUser = getCurrentUser();
+        if(!enrollment.getStudent().getId().equals(loggedInUser.getId()) && loggedInUser.getRole().getName()!=RoleType.ADMIN)
+            throw new UnauthorisedEnrollmentException(id);
+        enrollmentRepository.delete(enrollment);
+
     }
 }

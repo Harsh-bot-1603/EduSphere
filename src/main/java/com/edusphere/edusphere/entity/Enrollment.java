@@ -22,6 +22,7 @@ public class Enrollment {
     private User student;
     @ManyToOne
     private Course course;
+    private String instructorName;
     private LocalDateTime enrollmentDate;
     @PositiveOrZero
     private int progress;
