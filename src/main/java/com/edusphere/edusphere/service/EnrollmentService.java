@@ -1,18 +1,19 @@
 package com.edusphere.edusphere.service;
 
 import com.edusphere.edusphere.dto.response.EnrollmentResponse;
-import com.edusphere.edusphere.entity.Course;
-import com.edusphere.edusphere.entity.Enrollment;
-import com.edusphere.edusphere.entity.User;
+import com.edusphere.edusphere.entity.*;
 import com.edusphere.edusphere.enums.EnrollmentStatus;
 import com.edusphere.edusphere.exception.*;
 import com.edusphere.edusphere.repository.CourseRepository;
 import com.edusphere.edusphere.repository.EnrollmentRepository;
 import com.edusphere.edusphere.enums.RoleType;
+import com.edusphere.edusphere.repository.LessonProgressRepository;
+import com.edusphere.edusphere.repository.LessonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.List;
 public class EnrollmentService {
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final LessonRepository lessonRepository;
+    private final LessonProgressRepository lessonProgressRepository;
     private EnrollmentResponse mapToEnrollment(Enrollment enrollment){
         return EnrollmentResponse.builder()
                 .id(enrollment.getId())
@@ -36,6 +39,7 @@ public class EnrollmentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) authentication.getPrincipal();
     }
+    @Transactional
     public EnrollmentResponse enrollInCourse(Long courseId){
         User loggedInUser = getCurrentUser();
         if(loggedInUser.getRole().getName()!= RoleType.STUDENT) throw new UnauthorisedEnrollmentException(courseId);
@@ -50,6 +54,17 @@ public class EnrollmentService {
                 .instructorName(course.getTeacher().getName())
                 .build();
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+        List<Lesson> lessons = lessonRepository.findByCourseOrderByLessonOrder(course);
+        List<LessonProgress> progresses = new ArrayList<>();
+        for(Lesson l : lessons){
+            progresses.add(LessonProgress.builder()
+                    .lesson(l)
+                    .enrollment(savedEnrollment)
+                    .completed(false)
+                    .build());
+
+        }
+        lessonProgressRepository.saveAll(progresses);
         return mapToEnrollment(savedEnrollment);
     }
     public List<EnrollmentResponse> getMyEnrollments(){

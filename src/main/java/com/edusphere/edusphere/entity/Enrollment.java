@@ -7,6 +7,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,8 +26,8 @@ public class Enrollment {
     private Course course;
     private String instructorName;
     private LocalDateTime enrollmentDate;
-    @PositiveOrZero
-    private int progress;
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status;
+    @PositiveOrZero
+    private int progress;
 }

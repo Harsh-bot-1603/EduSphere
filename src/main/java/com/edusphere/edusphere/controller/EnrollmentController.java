@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/courses")
+@RequestMapping("/enrollments")
 @RequiredArgsConstructor
 public class EnrollmentController {
     private final EnrollmentService enrollmentService;
@@ -26,8 +26,8 @@ public class EnrollmentController {
         return ResponseEntity.ok(responses);
     }
     @DeleteMapping("/{enrollmentId}")
-    public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id){
-        enrollmentService.unEnroll(id);
+    public ResponseEntity<Void> deleteEnrollment(@PathVariable Long enrollmentId){
+        enrollmentService.unEnroll(enrollmentId);
         return ResponseEntity.noContent().build();
     }
 }
