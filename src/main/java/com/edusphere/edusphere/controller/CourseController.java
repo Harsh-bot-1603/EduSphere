@@ -6,12 +6,13 @@ import com.edusphere.edusphere.dto.response.CourseResponse;
 import com.edusphere.edusphere.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/courses")
@@ -25,8 +26,11 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCourse);
     }
     @GetMapping
-    public ResponseEntity<List<CourseResponse>> getAllCourses(){
-        List<CourseResponse> allCourses = courseService.getAllCourses();
+    public ResponseEntity<Page<CourseResponse>> getAllCourses(@RequestParam(required=false) String title, @RequestParam(required = false) BigDecimal minPrice,@RequestParam(required = false) BigDecimal maxPrice, Pageable pageable){
+        if(title != null && !title.isBlank()){
+            return ResponseEntity.ok(courseService.searchCourse(title,minPrice,maxPrice,pageable));
+        }
+        Page<CourseResponse> allCourses = courseService.getAllCourses(pageable);
         return ResponseEntity.ok(allCourses);
     }
     @GetMapping("/{id}")

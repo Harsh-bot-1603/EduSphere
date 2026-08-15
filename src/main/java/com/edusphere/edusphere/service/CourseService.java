@@ -12,11 +12,16 @@ import com.edusphere.edusphere.exception.UnauthorizedDeletionException;
 import com.edusphere.edusphere.exception.UnauthorizedUpdateException;
 import com.edusphere.edusphere.repository.CourseRepository;
 import com.edusphere.edusphere.enums.RoleType;
+import com.edusphere.edusphere.specification.CourseSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +63,9 @@ public class CourseService {
         Course course = courseRepository.findById(id).orElseThrow(()-> new CourseNotFoundException(id));
         return mapToResponse(course);
     }
-    public List<CourseResponse> getAllCourses(){
-        List<Course> courses = courseRepository.findAll();
-        List<CourseResponse> allCourses = new ArrayList<>();
-        for(Course course : courses){
-            allCourses.add(mapToResponse(course));
-        }
-        return allCourses;
+    public Page<CourseResponse> getAllCourses(Pageable pageable){
+        Page<Course> courses = courseRepository.findAll(pageable);
+        return courses.map(this::mapToResponse);
     }
     public CourseResponse updateCourse(Long id, UpdateCourseRequest request){
         Course course = courseRepository.findById(id).orElseThrow(()-> new CourseNotFoundException(id));
@@ -85,5 +86,13 @@ public class CourseService {
         if(loggedInUser.getRole().getName()!=RoleType.ADMIN && !course.getTeacher().getId().equals(loggedInUser.getId()))
             throw new UnauthorizedDeletionException("You cannot delete the course");
         courseRepository.delete(course);
+    }
+    public Page<CourseResponse> searchCourse(String title, BigDecimal minPrice,BigDecimal maxPrice,Pageable pageable){
+        Specification<Course> specification = (root,query,criteriaBuilder)->criteriaBuilder.conjunction();
+        if(title!=null && !title.isBlank()) specification = specification.and(CourseSpecification.hasTitle(title));
+        if(minPrice!=null) specification = specification.and(CourseSpecification.priceGreaterThanOrEqualTo(minPrice));
+        if(maxPrice!=null) specification = specification.and(CourseSpecification.priceLessThanOrEqualTo(maxPrice));
+        Page<Course> courses = courseRepository.findByTitleContainingIgnoreCase(title,pageable);
+        return courses.map(this::mapToResponse);
     }
 }
