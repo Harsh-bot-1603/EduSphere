@@ -3,6 +3,7 @@ package com.edusphere.edusphere.repository;
 import com.edusphere.edusphere.entity.Course;
 import com.edusphere.edusphere.entity.Enrollment;
 import com.edusphere.edusphere.entity.User;
+import com.edusphere.edusphere.enums.EnrollmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     List<Enrollment> findByStudent(User user);
 
     Optional<Enrollment> findByStudentAndCourse(User student, Course course);
+
+
+    long countByStudent(User student);
+
+    long countByStudentAndStatus(User student, EnrollmentStatus status);
 }
