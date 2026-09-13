@@ -6,6 +6,7 @@ import com.edusphere.edusphere.dto.response.CourseResponse;
 import com.edusphere.edusphere.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCourse);
     }
     @GetMapping
-    public ResponseEntity<Page<CourseResponse>> getAllCourses(@RequestParam(required=false) String title, @RequestParam(required = false) BigDecimal minPrice,@RequestParam(required = false) BigDecimal maxPrice, Pageable pageable){
+    public ResponseEntity<Page<CourseResponse>> getAllCourses(@RequestParam(required=false) String title, @RequestParam(required = false) BigDecimal minPrice,@RequestParam(required = false) BigDecimal maxPrice, @ParameterObject Pageable pageable){
         if(title != null && !title.isBlank()){
             return ResponseEntity.ok(courseService.searchCourse(title,minPrice,maxPrice,pageable));
         }

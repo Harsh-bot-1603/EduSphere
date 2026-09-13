@@ -115,7 +115,15 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .message(ex.getMessage())
                 .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        500,
+                        "Internal Server Error",
+                        request.getRequestURI(),
+                        ex.getMessage(),
+                        null
+                ));
     }
 
 

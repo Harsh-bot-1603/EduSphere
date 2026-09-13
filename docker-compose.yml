@@ -1,0 +1,47 @@
+services:
+
+  app:
+    build: .
+    container_name: edusphere-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/edusphere
+      DB_USERNAME: edusphere
+      DB_PASSWORD: edusphere123
+      JWT_SECRET: ZWR1c3BoZXJlLWp3dC1zZWNyZXQtMjAyNi1sb25nLXJhbmRvbS1rZXk=
+      JWT_EXPIRATION: 86400000
+    networks:
+      - edusphere-network
+
+  mysql:
+    image: mysql:8.4
+    container_name: edusphere-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: edusphere
+      MYSQL_USER: edusphere
+      MYSQL_PASSWORD: edusphere123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - edusphere-network
+
+networks:
+  edusphere-network:
+
+volumes:
+  mysql-data:
+

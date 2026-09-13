@@ -35,7 +35,8 @@ public class SecurityConfig {
         http.
                         csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/auth/register","/api/v1/roles").permitAll()
+                        .requestMatchers("/auth/login","/auth/register","/api/v1/roles","/swagger-ui.html",
+                                "/swagger-ui/**","/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/courses").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/courses/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
