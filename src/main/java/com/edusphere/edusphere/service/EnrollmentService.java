@@ -41,32 +41,73 @@ public class EnrollmentService {
     }
     @Transactional
     public EnrollmentResponse enrollInCourse(Long courseId){
+
+        System.out.println("STEP 1 - Current user");
         User loggedInUser = getCurrentUser();
-        if(loggedInUser.getRole().getName()!= RoleType.STUDENT) throw new UnauthorisedEnrollmentException(courseId);
-        Course course = courseRepository.findById(courseId).orElseThrow(()-> new CourseNotFoundException(courseId));
-        if(enrollmentRepository.existsByStudentAndCourse(loggedInUser,course)) throw new EnrollmentExistsException("You have already enrolled in this course.");
+
+        System.out.println("STEP 2 - Role: " + loggedInUser.getRole().getName());
+
+        if(loggedInUser.getRole().getName() != RoleType.STUDENT)
+            throw new UnauthorisedEnrollmentException(courseId);
+
+        System.out.println("STEP 3 - Finding course");
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+
+        System.out.println("STEP 4 - Course found: " + course.getId());
+
+        System.out.println("STEP 5 - Checking enrollment");
+
+        if(enrollmentRepository.existsByStudentAndCourse(loggedInUser, course))
+            throw new EnrollmentExistsException(
+                    "You have already enrolled in this course."
+            );
+
+        System.out.println("STEP 6 - Creating enrollment");
+
         Enrollment enrollment = Enrollment.builder()
                 .course(course)
                 .student(loggedInUser)
                 .enrollmentDate(LocalDateTime.now())
                 .status(EnrollmentStatus.ACTIVE)
                 .progress(0)
-                .instructorName(course.getTeacher() != null
-                        ? course.getTeacher().getName()
-                        : null)
+                .instructorName(
+                        course.getTeacher() != null
+                                ? course.getTeacher().getName()
+                                : null
+                )
                 .build();
-        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
-        List<Lesson> lessons = lessonRepository.findByCourseOrderByLessonOrder(course);
-        List<LessonProgress> progresses = new ArrayList<>();
-        for(Lesson l : lessons){
-            progresses.add(LessonProgress.builder()
-                    .lesson(l)
-                    .enrollment(savedEnrollment)
-                    .completed(false)
-                    .build());
 
+        System.out.println("STEP 7 - Saving enrollment");
+
+        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+
+        System.out.println("STEP 8 - Enrollment saved: " + savedEnrollment.getId());
+
+        List<Lesson> lessons =
+                lessonRepository.findByCourseOrderByLessonOrder(course);
+
+        System.out.println("STEP 9 - Lessons found: " + lessons.size());
+
+        List<LessonProgress> progresses = new ArrayList<>();
+
+        for(Lesson l : lessons){
+            progresses.add(
+                    LessonProgress.builder()
+                            .lesson(l)
+                            .enrollment(savedEnrollment)
+                            .completed(false)
+                            .build()
+            );
         }
+
+        System.out.println("STEP 10 - Saving lesson progress");
+
         lessonProgressRepository.saveAll(progresses);
+
+        System.out.println("STEP 11 - Done");
+
         return mapToEnrollment(savedEnrollment);
     }
     public List<EnrollmentResponse> getMyEnrollments(){
