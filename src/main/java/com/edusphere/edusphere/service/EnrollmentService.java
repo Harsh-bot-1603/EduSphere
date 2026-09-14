@@ -51,7 +51,9 @@ public class EnrollmentService {
                 .enrollmentDate(LocalDateTime.now())
                 .status(EnrollmentStatus.ACTIVE)
                 .progress(0)
-                .instructorName(course.getTeacher().getName())
+                .instructorName(course.getTeacher() != null
+                        ? course.getTeacher().getName()
+                        : null)
                 .build();
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
         List<Lesson> lessons = lessonRepository.findByCourseOrderByLessonOrder(course);
