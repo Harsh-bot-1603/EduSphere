@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class EnrollmentResponse {
     private Long id;
-    private String CourseTitle;
+    private String courseTitle;
     private String instructorName;
     private LocalDateTime enrollmentDate;
     private int progress;
