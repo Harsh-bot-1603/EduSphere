@@ -33,6 +33,7 @@ public class EnrollmentService {
                 .enrollmentDate(enrollment.getEnrollmentDate())
                 .progress(enrollment.getProgress())
                 .status(enrollment.getStatus())
+                .instructorName(enrollment.getInstructorName())
                 .build();
     }
     private User getCurrentUser(){
