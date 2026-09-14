@@ -29,7 +29,7 @@ public class EnrollmentService {
     private EnrollmentResponse mapToEnrollment(Enrollment enrollment){
         return EnrollmentResponse.builder()
                 .id(enrollment.getId())
-                .CourseTitle(enrollment.getCourse().getTitle())
+                .courseTitle(enrollment.getCourse().getTitle())
                 .enrollmentDate(enrollment.getEnrollmentDate())
                 .progress(enrollment.getProgress())
                 .status(enrollment.getStatus())
