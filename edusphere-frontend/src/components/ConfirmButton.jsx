@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
+/**
+ * A destructive action button that requires a second click to confirm,
+ * instead of a native window.confirm() dialog. Reverts back to the
+ * original label if left alone for a few seconds or if the user clicks
+ * elsewhere.
+ */
 export default function ConfirmButton({ label, confirmLabel = 'Confirm?', onConfirm, className = '' }) {
   const [confirming, setConfirming] = useState(false);
   const timerRef = useRef(null);

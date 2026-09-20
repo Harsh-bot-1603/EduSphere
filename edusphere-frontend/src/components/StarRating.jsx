@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+/**
+ * Renders 1-5 stars. Pass `onChange` to make it interactive (a picker);
+ * omit it to render a read-only rating display.
+ */
 export default function StarRating({ value = 0, onChange, size = 20 }) {
   const [hover, setHover] = useState(0);
   const interactive = typeof onChange === 'function';

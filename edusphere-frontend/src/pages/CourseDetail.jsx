@@ -67,7 +67,8 @@ export default function CourseDetail() {
       (role === 'INSTRUCTOR' &&
         ((teacherId && course && String(course.teacherId) === String(teacherId)) ||
           (displayName && course && course.teacherName === displayName) ||
-          
+          // Neither local hint is available yet - still show the controls and let
+          // the backend's own ownership check be the source of truth.
           (!teacherId && !displayName))));
 
   async function handleEnroll() {

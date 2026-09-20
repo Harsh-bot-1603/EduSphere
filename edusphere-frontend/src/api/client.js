@@ -11,6 +11,18 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+/**
+ * ApiError carries the HTTP status and, where the backend sent one, the
+ * per-field validation error map from ErrorResponse.errors.
+ *
+ * Heads up: most exceptions on the EduSphere backend (course not found,
+ * unauthorised update, duplicate enrollment, etc.) are not mapped to a
+ * specific @ExceptionHandler, so they fall through to the generic handler
+ * and come back as HTTP 500 - not 404/403/409 - even though the JSON body
+ * still has a correct, readable `message`. Because status codes aren't
+ * reliable here, this client (and every page) reads `error.message` to
+ * decide what to show the user rather than branching on `error.status`.
+ */
 export class ApiError extends Error {
   constructor(message, status, fieldErrors) {
     super(message);
