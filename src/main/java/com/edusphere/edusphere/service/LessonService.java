@@ -25,6 +25,7 @@ public class LessonService {
     private final CourseRepository courseRepository;
     private LessonResponse mapToLessonResponse(Lesson lesson){
         return LessonResponse.builder()
+                .id(lesson.getId())
                 .title(lesson.getTitle())
                 .description(lesson.getDescription())
                 .lessonOrder(lesson.getLessonOrder())
@@ -77,10 +78,10 @@ public class LessonService {
         Course course = lesson.getCourse();
         if(loggedInUser.getRole().getName()!=RoleType.ADMIN && !course.getTeacher().getId().equals(loggedInUser.getId()))
             throw new UnauthorizedUpdateException("Cannot be updated");
-       if(lesson.getLessonOrder()!= request.getLessonOrder()){
-           if(lessonRepository.existsByCourseAndLessonOrder(course,request.getLessonOrder()))
-               throw new LessonOrderAlreadyExistsException("Lesson order already exists");
-       }
+        if(lesson.getLessonOrder()!= request.getLessonOrder()){
+            if(lessonRepository.existsByCourseAndLessonOrder(course,request.getLessonOrder()))
+                throw new LessonOrderAlreadyExistsException("Lesson order already exists");
+        }
         lesson.setDescription(request.getDescription());
         lesson.setLessonOrder(request.getLessonOrder());
         lesson.setDurationInMinutes(request.getDurationInMinutes());

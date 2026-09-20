@@ -27,10 +27,13 @@ public class ReviewService {
     private final EnrollmentRepository enrollmentRepository;
     private ReviewResponse mapToResponse(Review review){
         return ReviewResponse.builder()
+                .id(review.getId())
                 .rating(review.getRating())
                 .comment(review.getComment())
                 .courseTitle(review.getCourse().getTitle())
                 .studentName(review.getStudent().getName())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
     private User getCurrentUser(){

@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class LessonResponse {
+    private Long id;
     @NotBlank
     @Column(nullable = false)
     private String title;
