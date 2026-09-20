@@ -62,6 +62,9 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  // Called once, right after a course is created, so we can reliably
+  // recognise "my courses" later - see CourseResponse.teacherId in the
+  // README for why this is necessary (there's no /users/me endpoint).
   const rememberTeacherId = useCallback((id) => {
     if (id === undefined || id === null) return;
     localStorage.setItem(TEACHER_ID_KEY, String(id));

@@ -14,6 +14,9 @@ export default function ReviewsSection({ courseId, reviews, setReviews, canRevie
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : null;
 
+  // Best-effort: the API doesn't expose a reviewer id, only a display
+  // name, so "my review" is a name match against the name you registered
+  // with in this browser (see README for why).
   const myReview = myName ? reviews.find((r) => r.studentName === myName) : null;
 
   async function handlePost(payload) {

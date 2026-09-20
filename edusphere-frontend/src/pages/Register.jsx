@@ -29,7 +29,9 @@ export default function Register() {
       toast.success(`Account created. You're signed in as a ${role.toLowerCase()}.`);
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      
+      // The backend's UserAlreadyExistsException doesn't set a message, so
+      // a duplicate-email registration surfaces as a bare 500 with no
+      // usable text. We give a specific, honest guess instead of nothing.
       setError(err.message || 'That email may already be registered. Try logging in instead.');
     } finally {
       setSubmitting(false);

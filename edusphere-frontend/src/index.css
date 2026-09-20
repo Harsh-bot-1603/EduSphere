@@ -1,3 +1,9 @@
+/* ==========================================================================
+   EduSphere — design tokens
+   Concept: a study "orbit" — course/lesson/review nodes circling the
+   learner. Deep indigo night sky, warm amber as the single accent, a
+   recurring ring/arc motif in progress indicators and the loading spinner.
+   ========================================================================== */
 
 :root {
   --ink-950: #0b1120;
