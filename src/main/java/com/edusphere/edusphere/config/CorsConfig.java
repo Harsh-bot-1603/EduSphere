@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173"
+                "https://edu-sphere-zeta.vercel.app/"
         ));
 
         configuration.setAllowedMethods(List.of(
