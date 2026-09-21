@@ -41,8 +41,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/courses").permitAll()
                         .requestMatchers(HttpMethod.GET,"/courses/**","/lessons/**","/rewiews/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
-                        .requestMatchers(HttpMethod.DELETE,"/courses/**","/enrollments/**","/lessons/**").hasAnyRole("ADMIN","INSTRUCTOR")
+                        .requestMatchers(HttpMethod.POST,"/courses").hasAnyRole("INSTRUCTOR","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/courses/**","/enrollments/**").hasAnyRole("ADMIN","INSTRUCTOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         jwtAuthenticationFilter,
