@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/courses").permitAll()
                         .requestMatchers(HttpMethod.GET,"/courses/**","/lessons/**","/rewiews/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
+                        .requestMatchers(HttpMethod.DELETE,"/courses/**","/enrollments/**","/lessons/**").hasAnyRole("ADMIN","INSTRUCTOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         jwtAuthenticationFilter,
