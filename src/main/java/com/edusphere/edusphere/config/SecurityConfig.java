@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,17 +29,17 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.
-                        csrf(AbstractHttpConfigurer::disable)
-                        .authorizeHttpRequests(auth -> auth
+                csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login","/auth/register","/api/v1/roles","/swagger-ui.html",
                                 "/swagger-ui/**","/v3/api-docs/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/courses").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/courses/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
+                        .requestMatchers(HttpMethod.GET,"/courses").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/courses/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/courses").hasRole("INSTRUCTOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         jwtAuthenticationFilter,
