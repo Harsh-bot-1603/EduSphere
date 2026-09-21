@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/courses")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class CourseController {
     private final CourseService courseService;
 
