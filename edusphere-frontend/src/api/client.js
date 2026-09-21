@@ -31,7 +31,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiRequest(path, { method = 'GET', body, auth = true, params } = {}) {
+export async function apiRequest(path, { method = 'GET', body, auth = true, params={} } = {}) {
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (auth && token) headers.Authorization = `Bearer ${token}`;
@@ -48,12 +48,18 @@ export async function apiRequest(path, { method = 'GET', body, auth = true, para
 
   let res;
   try {
+    const token = getToken()
+    const requestHeaders = {
+      'Content-Type':'application/json',
+      ...(auth && token?{'Authorization':`Bearer ${token}`}:{})
+    };
     res = await fetch(url, {
       method,
-      headers,
+      headers : requestHeaders,
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
-  } catch {
+  } catch (error) {
+    console.error(error)
     throw new ApiError(
       `Can't reach the EduSphere API at ${BASE_URL}. Check the server is running and that VITE_API_BASE_URL is set correctly.`,
       0

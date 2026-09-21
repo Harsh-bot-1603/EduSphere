@@ -39,15 +39,29 @@ export default function CourseDetail() {
     setLoading(true);
     setError('');
 
-    const calls = [getCourse(id), listLessonsByCourse(id), listReviewsByCourse(id)];
-    if (isAuthenticated && role === 'STUDENT') calls.push(getMyEnrollments());
+    const coursePromise = getCourse(id);
+    const lessonsPromise = listLessonsByCourse(id).catch((err) => {
+      console.warn('Lessons unavailable:', err.message);
+      return [];
+    });
+    const reviewsPromise = listReviewsByCourse(id).catch((err) => {
+      console.warn('Reviews unavailable:', err.message);
+      return [];
+    });
 
-    Promise.all(calls)
+    const enrollmentsPromise = isAuthenticated && role === 'STUDENT'
+      ? getMyEnrollments().catch((err) => {
+          console.warn('Enrollment lookup unavailable:', err.message);
+          return null;
+        })
+      : Promise.resolve(null);
+
+    Promise.all([coursePromise, lessonsPromise, reviewsPromise, enrollmentsPromise])
       .then(([courseRes, lessonsRes, reviewsRes, enrollmentsRes]) => {
         if (cancelled) return;
         setCourse(courseRes);
-        setLessons(lessonsRes);
-        setReviews(reviewsRes);
+        setLessons(lessonsRes || []);
+        setReviews(reviewsRes || []);
         if (enrollmentsRes) {
           const mine = enrollmentsRes.find((e) => e.courseTitle === courseRes.title);
           setEnrollment(mine || null);
