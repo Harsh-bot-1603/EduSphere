@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "https://edu-sphere-topaz.vercel.app/","http://localhost:5173"
+                "https://edu-sphere-xi-six.vercel.app","http://localhost:5173"
         ));
 
         configuration.setAllowedMethods(List.of(
